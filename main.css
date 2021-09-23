@@ -1,0 +1,27 @@
+.wrapper{
+  display: flex;
+}
+.table{
+  width: 20%;
+  padding: 0 40px;
+}
+.tabte-head .tr{
+  text-align: center;
+}
+.tr{
+  display: flex;
+}
+.td{
+  display: flex;
+  padding: 2px;
+  width: 33.33%;
+}
+.td input{
+  width: 100%;
+}
+
+.button-add{
+  width: 100%;
+  display: block;
+  margin-top: 6px;
+}
