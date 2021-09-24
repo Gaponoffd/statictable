@@ -1,12 +1,12 @@
 
-function addRow(table) {
+function addRow(table, value1="", value2="") {
   let templateRow = ` 
     <div class="tr">
       <div class="td">
-        <input type="text">
+        <input type="number" value="${value1}">
       </div>
       <div class="td">
-        <input type="text">
+        <input type="number" value="${value2}">
       </div>
       <div class="td">
         <button class="button" data-button="delete">DELETE</button>
@@ -22,82 +22,72 @@ function deletRow(el) {
   tr.remove();
 }
 
-function observeAddRow() {
-  let table = this.closest('.table');
-  let buttonsRemove = table.querySelectorAll('[data-button="delete"]');
-  buttonsRemove.forEach(button => {
-    button.addEventListener('click', function(){
-      deletRow(this);
-      observeTableResult();
-    })
-  });
+function tableChange (event) {
+  let target = event.target;
+  if(target.getAttribute('data-button') == "add"){
+    addRow(this);
+  }
+
+  if(target.getAttribute('data-button') == "delete"){
+    deletRow(target);
+  }
 }
 
-let buttonsAdd = document.querySelectorAll('[data-button="add"]');
+function createTrResult(event) {
+  let target = event.target;
 
-buttonsAdd.forEach(button => {
-  button.addEventListener('click', function () {
+  let tableTr1 = document.querySelectorAll('#t1 .table-body .tr');
+  let tableTr2 = document.querySelectorAll('#t2 .table-body .tr');
+  let tableTrResult = this.querySelectorAll('.table-body .tr');
 
-    let table = this.closest('.table');
+  if(target.getAttribute('data-button') == "calculate"){
+
+    if (tableTrResult.length) {
+      for (let i = 0; i < tableTrResult.length; i++) {
+        tableTrResult[i].remove();
+      }
+    }
+
+    let countTableTrResult;
+    if(tableTr1.length == 0){
+      alert('Добавьте строки в таблицу 1');
+      return
+    } else if (tableTr2.length == 0) {
+      alert('Добавьте строки в таблицу 2');
+      return
+    } else if (tableTr1.length <= tableTr2.length) {
+      countTableTrResult = tableTr1.length;
+    } else if (tableTr2.length < tableTr1.length) {
+      countTableTrResult = tableTr2.length;
+    }
     
-    addRow(table);
+    for (let i = 0; i < countTableTrResult; i++) {
 
-    observeAddRow.bind(this)();
+      let valX1 = tableTr1[i].children[0].children[0].value;
+      let valX2 = tableTr2[i].children[0].children[0].value;
 
-    observeTableResult()
-  })
-});
+      let valY1 = tableTr1[i].children[1].children[0].value;
+      let valY2 = tableTr2[i].children[1].children[0].value;
 
+      let val1 = (+valX1 + +valX2) / 2;
+      let val2 = (+valY1 + +valY2) / 2;
 
-
-function observeTableResult(){
-  let table = document.getElementById('table-result');
-
-  let tableBody1 = document.querySelector('#t1 .table-body');
-  let tableBodyTr1 = tableBody1.querySelectorAll('.tr');
-
-  let tableBody2 = document.querySelector('#t2 .table-body');
-  let tableBodyTr2 = tableBody2.querySelectorAll('.tr');
-
-  let countTr;
-
-  if(tableBodyTr1.length == 0){
-    countTr = tableBodyTr2.length
-  } else if (tableBodyTr2.length == 0) {
-    countTr = tableBodyTr1.length;
-  } else if (tableBodyTr1.length < tableBodyTr2.length) {
-    countTr = tableBodyTr1.length;
-  } else if (tableBodyTr2.length < tableBodyTr1.length) {
-    countTr = tableBodyTr2.length;
-  }
-
-
-  let tableBodyResult = table.querySelector('.table-body');
-  let tableBodyResultTr = tableBodyResult.querySelectorAll('.tr');
-  let countResultTr = tableBodyResultTr.length;
-
-  
-  if(countTr > countResultTr){
-    let addTr = +countTr - +countResultTr;
-
-    for (let i = 0; i < addTr; i++) {
-      addRow(table);
+      addRow(this, val1, val2);
     }
+
   }
 
-  
+}
 
-  if(countTr < countResultTr){
-    let dellTr = countResultTr - countTr;
-    console.log('dellTr', dellTr);
-    console.log('countResultTr', countResultTr);
 
-    for (let y = countResultTr; y <= +countResultTr - +dellTr; i--) {
-      //tableBodyResultTr[y].remove();
-      deletRow(tableBodyResultTr[y])
-      //console.log(tableBodyResultTr[y]);
-    }
-  }
+let table1 = document.getElementById('t1');
+let table2 = document.getElementById('t2');
+let table1Result = document.getElementById('table-result');
 
-  
-};
+table1.addEventListener('click', tableChange)
+table2.addEventListener('click', tableChange)
+
+table1Result.addEventListener('click', createTrResult)
+
+
+
