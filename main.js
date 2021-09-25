@@ -91,3 +91,65 @@ table1Result.addEventListener('click', createTrResult)
 
 
 
+
+
+
+
+
+
+// Получаем canvas элемент
+let canvas = document.getElementById('chart1'); 
+ 
+// Указываем элемент для 2D рисования
+let ctx = canvas.getContext('2d');
+
+ctx.fillStyle = "black"; // Задаём чёрный цвет для линий 
+ctx.lineWidth = 1; // Ширина линии
+
+ctx.beginPath(); // Запускает путь
+ctx.moveTo(30, 10); // Указываем начальный путь
+ctx.lineTo(30, 460); // ось Y
+ctx.lineTo(490, 460); // ось X
+ctx.stroke(); // рисуем
+ctx.closePath(); 
+
+
+// риски по Y 
+for(let i = 0; i < 6; i++) { 
+  ctx.fillText(5 - i + "", 6, i * 80 + 60); 
+  ctx.beginPath(); 
+  ctx.moveTo(26, i * 80 + 60); 
+  ctx.lineTo(30, i * 80 + 60); 
+  ctx.stroke();
+  ctx.closePath();
+}
+
+// риски по X
+for(let i = 1; i < 6; i++) { 
+  ctx.fillText(i + "", i * 80 - 6, 480); 
+  ctx.beginPath(); 
+  ctx.moveTo(i * 80, 466); 
+  ctx.lineTo(i * 80, 460); 
+  ctx.stroke();
+  ctx.closePath(); 
+}
+ 
+// Массив с меткам месяцев
+//let labels = [20, 40, 60, 80, 100]; 
+ 
+
+
+// Объявляем массив данных графика
+let data = [ [100, 200], [150, 400], [250, 80] ]; 
+ 
+
+// Цикл для от рисовки графиков
+ctx.beginPath();
+ctx.strokeStyle = "green";
+ctx.lineWidth = 4;
+for(const [x,y] of  data) {
+  ctx.lineTo(x, y);
+}
+
+ctx.stroke(); // рисуем
+ctx.closePath(); 
