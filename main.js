@@ -26,13 +26,7 @@ function addRow(table, value1="", value2="", readonly="") {
       }
     })
   });
-
 }
-
-function validationInput(event) {
-  console.log(event);
-}
-
 
 function deletRow(el) {
   let tr = el.closest('.tr');
@@ -44,11 +38,9 @@ function tableChange (event) {
   if(target.getAttribute('data-button') == "add"){
     addRow(this);
   }
-
   if(target.getAttribute('data-button') == "delete"){
     deletRow(target);
   }
-
 }
 
 function createTrResult(event) {
@@ -63,7 +55,7 @@ function createTrResult(event) {
   let dataResult = []
 
   if(target.getAttribute('data-button') == "calculate"){
-
+    // удаляем все строки
     if (tableTrResult.length) {
       for (let i = 0; i < tableTrResult.length; i++) {
         tableTrResult[i].remove();
@@ -84,7 +76,6 @@ function createTrResult(event) {
     }
     
     for (let i = 0; i < countTableTrResult; i++) {
-
       let valX1 = tableTr1[i].children[0].children[0].value;
       let valX2 = tableTr2[i].children[0].children[0].value;
 
@@ -96,13 +87,11 @@ function createTrResult(event) {
 
       addRow(this, val1, val2, true);
 
-
       // заполняем координаты графика
       data1.push([valX1, valY1]);
       data2.push([valX2, valY2]);
       dataResult.push([val1, val2]);
     }
-
     
     // отрисовака графиков
     let chart1 = document.getElementById('chart1');
@@ -112,26 +101,22 @@ function createTrResult(event) {
     drawChart(chart1, data1);
     drawChart(chart2, data2);
     drawChart(chart3, dataResult);
-  
   }
-
 }
 
-
 function drawChart(chart, data) {
-
   chart.style.display = "block";
   const chartWidth = 240;
   const chartHeight = 240;
   chart.width = chartWidth;
   chart.height = chartHeight;
   let ctx = chart.getContext('2d');
-
   ctx.strokeStyle = "#000";
   ctx.lineWidth = 1;
 
+  // Координаты
   ctx.beginPath();
-  ctx.moveTo(20, 20); // Указываем начальный путь
+  ctx.moveTo(20, 20); // стартовая координата
   ctx.lineTo(20, 220); // ось Y
   ctx.lineTo(220, 220); // ось X
   ctx.stroke();
@@ -158,19 +143,6 @@ function drawChart(chart, data) {
     ctx.closePath(); 
   } 
 
-  // Тестовый массив
-  let dataTest = [
-    [0,0],
-    [1,1],
-    [2,2],
-    [3,3],
-    [4,4],
-    [5,5],
-    [6,4],
-    [7,3],
-    [10,10]
-  ]
-
   // Цикл для от рисовки графиков
   ctx.beginPath();
   ctx.strokeStyle = "green";
@@ -178,11 +150,9 @@ function drawChart(chart, data) {
   for(const [x,y] of  data) {
     ctx.lineTo(20 + (x * 20), chartHeight - (y * 20) - 20);
   }
-
   ctx.stroke();
   ctx.closePath();
 }
-
 
 let table1 = document.getElementById('t1');
 let table2 = document.getElementById('t2');
