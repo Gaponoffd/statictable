@@ -1,12 +1,12 @@
 
-function addRow(table, value1="", value2="") {
+function addRow(table, value1="", value2="", readonly="") {
   let templateRow = ` 
     <div class="tr">
       <div class="td">
-        <input type="number" value="${value1}">
+        <input type="number" value="${value1}" ${readonly ? "readonly" : ""}>
       </div>
       <div class="td">
-        <input type="number" value="${value2}">
+        <input type="number" value="${value2}" ${readonly ? "readonly" : ""}>
       </div>
       <div class="td">
         <button class="button" data-button="delete">DELETE</button>
@@ -15,7 +15,24 @@ function addRow(table, value1="", value2="") {
   `
   let tableBody = table.querySelector('.table-body');
   tableBody.insertAdjacentHTML('beforeend', templateRow);
+
+  //валидация
+  let inputs = table.querySelectorAll('.td input');
+  inputs.forEach(input => {
+    input.addEventListener('change',function () {
+      if(this.value < 0 || this.value > 10){
+        alert('Введите число от 1 до 10');
+        this.value = ""
+      }
+    })
+  });
+
 }
+
+function validationInput(event) {
+  console.log(event);
+}
+
 
 function deletRow(el) {
   let tr = el.closest('.tr');
@@ -31,6 +48,7 @@ function tableChange (event) {
   if(target.getAttribute('data-button') == "delete"){
     deletRow(target);
   }
+
 }
 
 function createTrResult(event) {
@@ -39,6 +57,10 @@ function createTrResult(event) {
   let tableTr1 = document.querySelectorAll('#t1 .table-body .tr');
   let tableTr2 = document.querySelectorAll('#t2 .table-body .tr');
   let tableTrResult = this.querySelectorAll('.table-body .tr');
+
+  let data1 = [];
+  let data2 = [];
+  let dataResult = []
 
   if(target.getAttribute('data-button') == "calculate"){
 
@@ -72,11 +94,93 @@ function createTrResult(event) {
       let val1 = (+valX1 + +valX2) / 2;
       let val2 = (+valY1 + +valY2) / 2;
 
-      addRow(this, val1, val2);
+      addRow(this, val1, val2, true);
+
+
+      // заполняем координаты графика
+      data1.push([valX1, valY1]);
+      data2.push([valX2, valY2]);
+      dataResult.push([val1, val2]);
     }
 
+    
+    // отрисовака графиков
+    let chart1 = document.getElementById('chart1');
+    let chart2 = document.getElementById('chart2');
+    let chart3 = document.getElementById('chart3');
+
+    drawChart(chart1, data1);
+    drawChart(chart2, data2);
+    drawChart(chart3, dataResult);
+  
   }
 
+}
+
+
+function drawChart(chart, data) {
+
+  chart.style.display = "block";
+  const chartWidth = 240;
+  const chartHeight = 240;
+  chart.width = chartWidth;
+  chart.height = chartHeight;
+  let ctx = chart.getContext('2d');
+
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 1;
+
+  ctx.beginPath();
+  ctx.moveTo(20, 20); // Указываем начальный путь
+  ctx.lineTo(20, 220); // ось Y
+  ctx.lineTo(220, 220); // ось X
+  ctx.stroke();
+  ctx.closePath(); 
+
+  // риски по Y 
+  for(let i = 0; i <= 10; i++) { 
+    ctx.fillText(10 - i + "", 2, i * 20 + 24); 
+    ctx.beginPath(); 
+    ctx.moveTo(16, i * 20 + 20); 
+    ctx.lineTo(20, i * 20 + 20); 
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  // риски по X
+  for(let i = 1; i <= 10; i++) { 
+    ctx.fillText(i + "", i * 20 + 16, 236); 
+    ctx.beginPath(); 
+    ctx.lineWidth = 1;
+    ctx.moveTo(i * 20 + 20, 224); 
+    ctx.lineTo(i * 20 + 20, 220); 
+    ctx.stroke();
+    ctx.closePath(); 
+  } 
+
+  // Тестовый массив
+  let dataTest = [
+    [0,0],
+    [1,1],
+    [2,2],
+    [3,3],
+    [4,4],
+    [5,5],
+    [6,4],
+    [7,3],
+    [10,10]
+  ]
+
+  // Цикл для от рисовки графиков
+  ctx.beginPath();
+  ctx.strokeStyle = "green";
+  ctx.lineWidth = 1;
+  for(const [x,y] of  data) {
+    ctx.lineTo(20 + (x * 20), chartHeight - (y * 20) - 20);
+  }
+
+  ctx.stroke();
+  ctx.closePath();
 }
 
 
@@ -88,68 +192,3 @@ table1.addEventListener('click', tableChange)
 table2.addEventListener('click', tableChange)
 
 table1Result.addEventListener('click', createTrResult)
-
-
-
-
-
-
-
-
-
-// Получаем canvas элемент
-let canvas = document.getElementById('chart1'); 
- 
-// Указываем элемент для 2D рисования
-let ctx = canvas.getContext('2d');
-
-ctx.fillStyle = "black"; // Задаём чёрный цвет для линий 
-ctx.lineWidth = 1; // Ширина линии
-
-ctx.beginPath(); // Запускает путь
-ctx.moveTo(30, 10); // Указываем начальный путь
-ctx.lineTo(30, 460); // ось Y
-ctx.lineTo(490, 460); // ось X
-ctx.stroke(); // рисуем
-ctx.closePath(); 
-
-
-// риски по Y 
-for(let i = 0; i < 6; i++) { 
-  ctx.fillText(5 - i + "", 6, i * 80 + 60); 
-  ctx.beginPath(); 
-  ctx.moveTo(26, i * 80 + 60); 
-  ctx.lineTo(30, i * 80 + 60); 
-  ctx.stroke();
-  ctx.closePath();
-}
-
-// риски по X
-for(let i = 1; i < 6; i++) { 
-  ctx.fillText(i + "", i * 80 - 6, 480); 
-  ctx.beginPath(); 
-  ctx.moveTo(i * 80, 466); 
-  ctx.lineTo(i * 80, 460); 
-  ctx.stroke();
-  ctx.closePath(); 
-}
- 
-// Массив с меткам месяцев
-//let labels = [20, 40, 60, 80, 100]; 
- 
-
-
-// Объявляем массив данных графика
-let data = [ [100, 200], [150, 400], [250, 80] ]; 
- 
-
-// Цикл для от рисовки графиков
-ctx.beginPath();
-ctx.strokeStyle = "green";
-ctx.lineWidth = 4;
-for(const [x,y] of  data) {
-  ctx.lineTo(x, y);
-}
-
-ctx.stroke(); // рисуем
-ctx.closePath(); 
